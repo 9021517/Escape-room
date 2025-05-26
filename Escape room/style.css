@@ -1,0 +1,56 @@
+/* Algemene opmaak */
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  font-family: 'Courier New', monospace;
+  background-color: black;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-image: url('background.png'); /* Optioneel: pas dit aan met je eigen achtergrond */
+  background-size: cover;
+  background-position: center;
+}
+
+/* Opmaak voor secties */
+section {
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  max-width: 600px;
+}
+
+/* Kopteksten */
+h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
+  color: #ffcc00;
+}
+
+p {
+  font-size: 20px;
+  margin-bottom: 30px;
+}
+
+/* Knoppen */
+button {
+  background: transparent;
+  color: white;
+  font-size: 20px;
+  padding: 12px 30px;
+  border: 2px solid white;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  border-radius: 10px;
+  letter-spacing: 1px;
+}
+
+button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.05);
+  box-shadow: 0 0 10px white;
+}

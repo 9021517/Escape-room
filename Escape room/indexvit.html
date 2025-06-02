@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hospital Escape</title>
+  <link rel="stylesheet" href="stylevid.css" />
+</head>
+<body>
+  <section class="screen" id="home-screen">
+    <div class="content-box">
+      <h1> Hospital Escape</h1>
+      <p>Je bent gekidnaped door een psigiese stoornis doctor die houwt van mensen lichaam te onderzoeken 
+        je moet van hier komen te ontsnappen zonder dat je dood wordt gemaakt.!</p>
+      <p>
+        Je wordt wakker in een verlaten ziekenhuis. Alles is donker en stil... 
+        maar je voelt dat je niet alleen bent. Vind een manier om te ontsnappen 
+        voordat het te laat is...
+      </p>
+      <div class="buttons">
+        <button onclick="startGame()">Play</button>
+        <button>Options</button>
+        <button onclick="window.close()">Exit</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    function startGame() {
+      window.location.href = "room1.html";
+    }
+  </script>
+</body>
+</html>
+

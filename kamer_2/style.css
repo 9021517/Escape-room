@@ -1,0 +1,456 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    font-family: 'Courier New', monospace;
+    /* Основной фон с поддержкой изображения */
+    background: 
+/* Темный оверлей для атмосферы */
+linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)),
+/* Здесь будет ваше изображение больницы */
+url('img/hospital-corridor.jpg') center/cover no-repeat,
+/* Запасной градиент если изображение не загрузится */
+linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+    
+    /* Дополнительные эффекты атмосферы */
+    background-attachment: fixed;
+    color: #e0e0e0;
+    overflow: hidden;
+    position: relative;
+    cursor: crosshair;
+}
+
+/* Фон больничного коридора с дополнительными эффектами */
+.hospital-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+/* Виньетирование по краям */
+radial-gradient(ellipse at center, transparent 30%, rgba(0, 0, 0, 0.3) 70%),
+/* Тени сверху и снизу */
+linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 15%, transparent 85%, rgba(0,0,0,0.8) 100%),
+/* Тени по бокам */
+linear-gradient(90deg, rgba(0,0,0,0.6) 0%, transparent 25%, transparent 75%, rgba(0,0,0,0.6) 100%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Эффект мерцающего света */
+.flickering-light {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 20px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    border-radius: 10px;
+    animation: flicker 3s infinite;
+    z-index: 2;
+}
+
+@keyframes flicker {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.8; }
+    25%, 75% { opacity: 0.1; }
+}
+
+/* Интерактивные объекты */
+.interactive-object {
+    position: absolute;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    color: #ff6b6b;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+}
+
+.interactive-object:hover {
+    border-color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.1);
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+}
+
+/* Позиционирование объектов с фоновыми изображениями */
+#kast {
+    left: 15%;
+    top: 40%;
+    width: 120px;
+    height: 80px;
+    font-size: 14px;
+    /* Место для изображения медицинского шкафа */
+    background-image: url('img/medical-cabinet.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    /* Если изображения нет, показываем иконку */
+    background-color: rgba(139, 0, 0, 0.3);
+}
+
+#kluis {
+    right: 20%;
+    top: 35%;
+    width: 100px;
+    height: 100px;
+    font-size: 14px;
+    /* Место для изображения сейфа */
+    background-image: url('img/safe.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: rgba(100, 100, 100, 0.3);
+}
+
+#deur {
+    right: 5%;
+    top: 25%;
+    width: 80px;
+    height: 150px;
+    font-size: 16px;
+    /* Место для изображения двери */
+    background-image: url('img/exit-door.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: rgba(139, 0, 0, 0.3);
+}
+
+/* Стили для объектов без изображений (fallback) */
+.interactive-object:not([style*="background-image"]) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Скрытие текста когда есть изображение */
+.interactive-object[style*="background-image"]:not(.no-image) {
+    color: transparent;
+    text-shadow: none;
+}
+
+.interactive-object[style*="background-image"]:not(.no-image):hover {
+    color: #ff6b6b;
+    text-shadow: 0 0 10px rgba(255, 107, 107, 0.8);
+    background-blend-mode: multiply;
+}
+
+/* Модальное окно вопроса */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+    border: 2px solid #ff6b6b;
+    border-radius: 15px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
+}
+
+.modal h3 {
+    color: #ff6b6b;
+    margin-bottom: 20px;
+    font-size: 18px;
+    text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+}
+
+.modal p {
+    margin-bottom: 20px;
+    line-height: 1.6;
+    color: #e0e0e0;
+}
+
+.modal input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    background: #1a1a1a;
+    border: 2px solid #555;
+    border-radius: 8px;
+    color: #e0e0e0;
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+}
+
+.modal input:focus {
+    outline: none;
+    border-color: #ff6b6b;
+    box-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+}
+
+.modal button {
+    background: linear-gradient(135deg, #ff6b6b, #8b0000);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    color: white;
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0 10px;
+}
+
+.modal button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+}
+
+/* Инвентарь */
+#inventaris {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.9));
+    border-top: 2px solid #ff6b6b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px;
+    z-index: 100;
+}
+
+.inventory-slot {
+    width: 60px;
+    height: 60px;
+    border: 2px solid #555;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.inventory-slot.heeft-item {
+    border-color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.1);
+    box-shadow: 0 0 15px rgba(255, 107, 107, 0.3);
+}
+
+/* Стили для изображений в инвентаре */
+.inventory-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 5px rgba(255, 107, 107, 0.5));
+}
+
+/* Поддержка изображений для ключа и записки */
+#sleutel-icon {
+    background-image: url('img/key-icon.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#notitie-icon {
+    background-image: url('img/note-icon.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.inventory-slot:hover {
+    transform: scale(1.1);
+}
+
+/* Таймер */
+#timer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #8b0000, #ff6b6b);
+    border: 2px solid #ff6b6b;
+    border-radius: 10px;
+    padding: 15px 20px;
+    font-family: 'Courier New', monospace;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.4);
+    z-index: 100;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.timer-warning {
+    animation: warning-flash 0.5s infinite;
+}
+
+@keyframes warning-flash {
+    0%, 100% { background: linear-gradient(135deg, #8b0000, #ff6b6b); }
+    50% { background: linear-gradient(135deg, #ff0000, #ff6b6b); }
+}
+
+/* Скрытые элементы */
+.verborgen {
+    display: none !important;
+}
+
+/* Записка */
+.notitie-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.notitie-content {
+    background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+    border: 2px solid #ff6b6b;
+    border-radius: 15px;
+    padding: 30px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
+    position: relative;
+}
+
+.notitie-content::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: linear-gradient(45deg, #ff6b6b, transparent, #ff6b6b);
+    border-radius: 20px;
+    z-index: -1;
+    opacity: 0.3;
+}
+
+.notitie-content h3 {
+    color: #ff6b6b;
+    margin-bottom: 20px;
+    font-size: 20px;
+    text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+}
+
+.code-display {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #00ff00;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    font-size: 36px;
+    font-weight: bold;
+    color: #00ff00;
+    text-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+    letter-spacing: 8px;
+    position: relative;
+    /* Поддержка фонового изображения для записки */
+    background-image: url('img/code-note.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-blend-mode: multiply;
+}
+
+/* Стили для записки с кодом */
+.notitie-content {
+    background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+    border: 2px solid #ff6b6b;
+    border-radius: 15px;
+    padding: 30px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
+    position: relative;
+    /* Поддержка фонового изображения записки */
+    background-image: 
+linear-gradient(rgba(45, 45, 45, 0.9), rgba(26, 26, 26, 0.9)),
+url('img/old-paper.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.success-flash {
+    animation: success-flash 0.5s;
+}
+
+@keyframes success-flash {
+    0% { background: rgba(0, 255, 0, 0); }
+    50% { background: rgba(0, 255, 0, 0.3); }
+    100% { background: rgba(0, 255, 0, 0); }
+}
+
+.error-flash {
+    animation: error-flash 0.5s;
+}
+
+@keyframes error-flash {
+    0% { background: rgba(255, 0, 0, 0); }
+    50% { background: rgba(255, 0, 0, 0.3); }
+    100% { background: rgba(255, 0, 0, 0); }
+}
+
+.interactive-object img {
+    mix-blend-mode: multiply;
+    /* или */
+    background: transparent;
+}
+
+/* Для конкретных объектов */
+#medicalCabinet img,
+#exitDoor img {
+    mix-blend-mode: screen; /* убирает белый фон */
+}

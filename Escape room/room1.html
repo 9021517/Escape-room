@@ -18,73 +18,57 @@
       <p id="timer" style="font-size: 20px; margin-top: 20px;">Tijd over: 10seconden</p> <!-- Timer zichtbaar -->
     </div>
 
-    <img id="key" src="key.png" alt="Sleutel" onclick="pickupKey()">
-    <img id="door" src="deur.png" alt="Deur" onclick="tryEscape()">
+    <img id="key" src="keyroom1.png" alt="Sleutel" onclick="pickupKey()">
+    <img id="door" src="deurroom1.png" alt="Deur" onclick="tryEscape()">
   </section>
 
   <!-- Jumpscare -->
 
+  <style>
+    .kamer {
+      background-image: url('room1.png');
+    }
+  </style>
+
+
   <script>
-    let hasKey = false;
-let timeLeft = 10; // 10 seconden timer
-let timerInterval = null;
+  let hasKey = false;
+  let timeLeft = 25; // 25 seconden timer
+  let timerInterval = null;
 
-function startTimer() {
-  timerInterval = setInterval(() => {
-    timeLeft--;
-    document.getElementById('timer').textContent = `Tijd over: ${timeLeft} seconden`;
+  function startTimer() {
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      document.getElementById('timer').textContent = `Tijd over: ${timeLeft} seconden`;
 
-    if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      alert("Je hebt te lang gewacht! Het spel is voorbij.");
-      window.location.href = "losevd.html"; // Verliespagina
-    }
-  }, 1000);
-}
-
-function pickupKey() {
-  hasKey = true;
-  document.getElementById('key').style.display = 'none';
-  document.getElementById('room-text').innerHTML += "<br><em>Je hebt de sleutel opgepakt!</em>";
-}
-
-function tryEscape() {
-  if (hasKey) {
-    clearInterval(timerInterval);  // Stop de timer want je hebt gewonnen
-    window.location.href = "winvd.html"; // Winpagina
-  } else {
-    alert("De deur zit op slot. Je hebt een sleutel nodig.");
-  }
-}
-
-// Start de timer als de pagina geladen is
-window.onload = () => {
-  startTimer();
-};
-
-    function pickupKey() {
-      hasKey = true;
-      document.getElementById('key').style.display = 'none';
-      document.getElementById('room-text').innerHTML += "<br><em>Je hebt de sleutel opgepakt!</em>";
-    }
-
-    function tryEscape() {
-      if (hasKey) {
-        document.getElementById('room1').classList.add('hidden');
-        document.getElementById('jumpscare').classList.remove('hidden');
-      } else {
-        alert("De deur zit op slot. Je hebt een sleutel nodig.");
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        alert("Je hebt te lang gewacht! Het spel is voorbij.");
+        window.location.href = "losevd.html"; // Verliespagina
       }
-    }
-
-    function tryEscape() {
-  if (hasKey) {
-    window.location.href = "winvd.html";
-  } else {
-    window.location.href = "losevd.html";
+    }, 1000);
   }
-}
 
-  </script>
+  function pickupKey() {
+    hasKey = true;
+    document.getElementById('key').style.display = 'none';
+    document.getElementById('room-text').innerHTML += "<br><em>Je hebt de sleutel opgepakt!</em>";
+  }
+
+  function tryEscape() {
+    if (hasKey) {
+      clearInterval(timerInterval);  // Stop de timer want je hebt gewonnen
+      window.location.href = "kamer1.2.html"; // Ga naar Kamer 1.2 (bloedpuzzel)
+    } else {
+      alert("De deur zit op slot. Je hebt een sleutel nodig.");
+    }
+  }
+
+  // Start de timer als de pagina geladen is
+  window.onload = () => {
+    startTimer();
+  };
+</script>
+
 </body>
 </html>

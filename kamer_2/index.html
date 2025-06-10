@@ -4,43 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Escape Room - Kamer 2</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style2.css">
 </head>
 <body>
-    <!-- Больничный фон -->
     <div class="hospital-background"></div>
     <div class="flickering-light"></div>
 
-    <!-- Интерактивные объекты -->
     <div id="kast" class="interactive-object">
-        <br>Medicijnkast
+        🏥<br>Medicijnkast
     </div>
 
     <div id="kluis" class="interactive-object">
-        <br>Kluis
+        🔒<br>Kluis
     </div>
 
     <div id="deur" class="interactive-object">
-        <br>Uitgang
+        🚪<br>Uitgang
     </div>
 
-    <!-- Модальное окно вопроса -->
     <div id="vraag-modal" class="modal verborgen">
         <div class="modal-content">
             <h3>Programmeer Vraag</h3>
             <p id="vraag-tekst"></p>
+            <p id="hint-tekst" class="verborgen" style="color: orange; font-style: italic; margin-top: 10px;"></p>
             <input type="text" id="antwoord-input" placeholder="Typ je antwoord hier...">
             <div>
                 <button id="bevestig-btn">Bevestigen</button>
+                <button id="hint-btn" class="hint-btn">Hint</button>
                 <button id="annuleer-btn">Annuleren</button>
             </div>
         </div>
     </div>
 
-    <!-- Модальное окно записки -->
     <div id="notitie-modal" class="notitie-modal verborgen">
         <div class="notitie-content">
-            <h3> Geheime Notitie</h3>
+            <h3>📋 Geheime Notitie</h3>
             <p>Je hebt een oude doktersnotitie gevonden...</p>
             <div class="code-display" id="deur-code">4219</div>
             <p style="font-size: 12px; color: #888;">Gebruik deze code om te ontsnappen!</p>
@@ -48,17 +46,15 @@
         </div>
     </div>
 
-    <!-- Инвентарь -->
     <div id="inventaris">
         <div class="inventory-slot" id="sleutel-slot" title="Sleutel">
-            <span id="sleutel-icon" class="verborgen"></span>
+            <span id="sleutel-icon" class="verborgen">🔑</span>
         </div>
         <div class="inventory-slot" id="notitie-slot" title="Notitie">
             <span id="notitie-icon" class="verborgen">📋</span>
         </div>
     </div>
 
-    <!-- Таймер -->
     <div id="timer">5:00</div>
 
     <script src="script.js"></script>

@@ -7,33 +7,13 @@ let gameState = {
     spelActief: true
 };
 
-// Вопросы для второй комнаты
-const vragen = [
-    {
-id: 1,
-roomId: 2,
-object: "kast",
-tekst: "Wat is de output van console.log(typeof []) in JavaScript?",
-antwoord: "object",
-beloning: "sleutel"
-    },
-    {
-id: 2,
-roomId: 2,
-object: "kluis", 
-tekst: "Hoe declareer je een variabele in JavaScript die niet kan worden gewijzigd?",
-antwoord: "const",
-beloning: "notitie"
-    },
-    {
-id: 3,
-roomId: 2,
-object: "deur",
-tekst: "Voer de deurcode in om te ontsnappen:",
-antwoord: "4219",
-beloning: "ontsnapping"
-    }
-];
+// Конфигурация комнаты
+const ROOM_ID = 2;
+const VRAAG_IDS = {
+    KAST: 1,
+    KLUIS: 2, 
+    DEUR: 3
+};
 
 // DOM elementen
 const elementen = {
@@ -42,8 +22,10 @@ const elementen = {
     deur: document.getElementById('deur'),
     vraagModal: document.getElementById('vraag-modal'),
     vraagTekst: document.getElementById('vraag-tekst'),
+    hintTekst: document.getElementById('hint-tekst'),
     antwoordInput: document.getElementById('antwoord-input'),
     bevestigBtn: document.getElementById('bevestig-btn'),
+    hintBtn: document.getElementById('hint-btn'),
     annuleerBtn: document.getElementById('annuleer-btn'),
     notitieModal: document.getElementById('notitie-modal'),
     sluitNotitieBtn: document.getElementById('sluit-notitie-btn'),
@@ -64,29 +46,123 @@ const timerInterval = setInterval(() => {
     const seconden = tijdOver % 60;
     elementen.timer.textContent = `${minuten}:${seconden.toString().padStart(2, '0')}`;
     
-    // Предупреждение в последнюю минуту
     if (tijdOver <= 60) {
-elementen.timer.classList.add('timer-warning');
+        elementen.timer.classList.add('timer-warning');
     }
     
     if (tijdOver <= 0) {
-gameOver();
+        gameOver();
     }
 }, 1000);
 
-// Функция показа вопроса
-function toonVraag(vraagId) {
-    const vraag = vragen.find(v => v.id === vraagId);
-    if (!vraag) return;
+// Функция загрузки вопроса из базы данных
+async function laadVraagUitDatabase(questionId, roomId) {
+    try {
+        toonStatusBericht('Loading vraag...', 'info');
+        
+        const response = await fetch(`get-question.php?id=${questionId}&roomId=${roomId}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+            return {
+                id: data.data.id,
+                tekst: data.data.question,
+                antwoord: data.data.answer,
+                hint: data.data.hint,
+                beloning: bepaalBeloning(questionId) // Определяем награду по ID вопроса
+            };
+        } else {
+            throw new Error(data.message || 'Onbekende fout bij het laden van de vraag');
+        }
+    } catch (error) {
+        console.error('Fout bij het laden van vraag:', error);
+        toonStatusBericht(`❌ Fout bij laden vraag: ${error.message}`, 'error');
+        return null;
+    }
+}
+
+// Функция определения награды по ID вопроса
+function bepaalBeloning(questionId) {
+    switch(questionId) {
+        case VRAAG_IDS.KAST:
+            return 'sleutel';
+        case VRAAG_IDS.KLUIS:
+            return 'notitie';
+        case VRAAG_IDS.DEUR:
+            return 'ontsnapping';
+        default:
+            return null;
+    }
+}
+
+// Функция показа статусного сообщения
+function toonStatusBericht(bericht, type = 'info') {
+    const bestaandBericht = document.querySelector('.status-message');
+    if (bestaandBericht) {
+        bestaandBericht.remove();
+    }
+    
+    const statusDiv = document.createElement('div');
+    statusDiv.className = 'status-message';
+    statusDiv.textContent = bericht;
+    
+    if (type === 'success') {
+        statusDiv.style.borderColor = '#00ff00';
+        statusDiv.style.color = '#00ff00';
+    } else if (type === 'error') {
+        statusDiv.style.borderColor = '#ff0000';
+        statusDiv.style.color = '#ff0000';
+    }
+    
+    document.body.appendChild(statusDiv);
+    
+    setTimeout(() => {
+        if (statusDiv.parentNode) {
+            statusDiv.remove();
+        }
+    }, 3000);
+}
+
+// Функция показа вопроса (теперь загружает из БД)
+async function toonVraag(vraagId) {
+    // Показываем индикатор загрузки
+    elementen.vraagModal.classList.remove('verborgen');
+    elementen.vraagTekst.textContent = 'Vraag wordt geladen...';
+    elementen.bevestigBtn.disabled = true;
+    
+    const vraag = await laadVraagUitDatabase(vraagId, ROOM_ID);
+    
+    if (!vraag) {
+        sluitVraagModal();
+        return;
+    }
     
     gameState.huidigeVraag = vraag;
     elementen.vraagTekst.textContent = vraag.tekst;
+    elementen.hintTekst.classList.add('verborgen');
     elementen.antwoordInput.value = '';
-    elementen.vraagModal.classList.remove('verborgen');
+    elementen.bevestigBtn.disabled = false;
     elementen.antwoordInput.focus();
 }
 
-// Функция проверки ответа
+// Функция показа хинта
+function toonHint() {
+    if (!gameState.huidigeVraag || !gameState.huidigeVraag.hint) {
+        toonStatusBericht('Geen hint beschikbaar voor deze vraag.', 'info');
+        return;
+    }
+    
+    elementen.hintTekst.textContent = `💡 Hint: ${gameState.huidigeVraag.hint}`;
+    elementen.hintTekst.classList.remove('verborgen');
+    toonStatusBericht('Hint onthuld!', 'info');
+}
+
+// Функция проверки ответа (ZONDER FLASH EFFECTEN)
 function controleerAntwoord() {
     if (!gameState.huidigeVraag) return;
     
@@ -94,108 +170,102 @@ function controleerAntwoord() {
     const juisteAntwoord = gameState.huidigeVraag.antwoord.toLowerCase();
     
     if (gegevenAntwoord === juisteAntwoord) {
-// Правильный ответ
-document.body.classList.add('success-flash');
-setTimeout(() => document.body.classList.remove('success-flash'), 500);
-
-verwerkJuistAntwoord(gameState.huidigeVraag);
-sluitVraagModal();
+        verwerkJuistAntwoord(gameState.huidigeVraag);
+        sluitVraagModal();
     } else {
-// Неправильный ответ
-document.body.classList.add('error-flash');
-setTimeout(() => document.body.classList.remove('error-flash'), 500);
-
-alert('❌ Fout antwoord! Probeer het opnieuw.');
-elementen.antwoordInput.value = '';
-elementen.antwoordInput.focus();
+        toonStatusBericht('❌ Fout antwoord! Probeer het opnieuw.', 'error');
+        elementen.antwoordInput.value = '';
+        elementen.antwoordInput.focus();
     }
 }
 
 // Обработка правильного ответа
 function verwerkJuistAntwoord(vraag) {
     switch(vraag.beloning) {
-case 'sleutel':
-    gameState.sleutelGevonden = true;
-    elementen.sleutelIcon.classList.remove('verborgen');
-    elementen.sleutelSlot.classList.add('heeft-item');
-    alert('Geweldig! Je hebt een sleutel gevonden in de medicijnkast!');
-    break;
-    
-case 'notitie':
-    gameState.notitieGevonden = true;
-    elementen.notitieIcon.classList.remove('verborgen');
-    elementen.notitieSlot.classList.add('heeft-item');
-    alert('Perfect! Je hebt een belangrijke notitie gevonden in de kluis!');
-    break;
-    
-case 'ontsnapping':
-    winSpel();
-    break;
+        case 'sleutel':
+            gameState.sleutelGevonden = true;
+            elementen.sleutelIcon.classList.remove('verborgen');
+            elementen.sleutelSlot.classList.add('heeft-item');
+            toonStatusBericht('🔑 Geweldig! Je hebt een sleutel gevonden!', 'success');
+            break;
+
+        case 'notitie':
+            gameState.notitieGevonden = true;
+            elementen.notitieIcon.classList.remove('verborgen');
+            elementen.notitieSlot.classList.add('heeft-item');
+            toonStatusBericht('📋 Perfect! Je hebt een belangrijke notitie gevonden!', 'success');
+            break;
+
+        case 'ontsnapping':
+            winSpel();
+            break;
     }
 }
 
 // Закрытие модального окна вопроса
 function sluitVraagModal() {
     elementen.vraagModal.classList.add('verborgen');
+    elementen.bevestigBtn.disabled = false;
     gameState.huidigeVraag = null;
 }
 
 // Обработчики событий для объектов
 elementen.kast.addEventListener('click', () => {
     if (gameState.sleutelGevonden) {
-alert('Je hebt de sleutel al uit deze kast gehaald.');
-return;
+        toonStatusBericht('Je hebt de sleutel al uit deze kast gehaald.', 'info');
+        return;
     }
-    toonVraag(1);
+    toonVraag(VRAAG_IDS.KAST);
 });
 
 elementen.kluis.addEventListener('click', () => {
     if (gameState.notitieGevonden) {
-alert('Je hebt de notitie al uit deze kluis gehaald.');
-return;
+        toonStatusBericht('Je hebt de notitie al uit deze kluis gehaald.', 'info');
+        return;
     }
-    toonVraag(2);
+    toonVraag(VRAAG_IDS.KLUIS);
 });
 
 elementen.deur.addEventListener('click', () => {
     if (!gameState.sleutelGevonden) {
-alert('De deur is op slot! Je hebt een sleutel nodig.');
-return;
+        toonStatusBericht('🔒 De deur is op slot! Je hebt een sleutel nodig.', 'error');
+        return;
     }
     
     if (!gameState.notitieGevonden) {
-alert('Je hebt de sleutel, maar er is nog een code nodig. Zoek naar aanwijzingen!');
-return;
+        toonStatusBericht('🔑 Je hebt de sleutel, maar er is nog een code nodig!', 'error');
+        return;
     }
     
-    toonVraag(3);
+    toonVraag(VRAAG_IDS.DEUR);
 });
 
 // Обработчики для модального окна вопроса
 elementen.bevestigBtn.addEventListener('click', controleerAntwoord);
+elementen.hintBtn.addEventListener('click', toonHint);
 elementen.annuleerBtn.addEventListener('click', sluitVraagModal);
 
 // Enter для подтверждения ответа
 elementen.antwoordInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
-controleerAntwoord();
+        controleerAntwoord();
     }
 });
 
 // Обработчики для инвентаря
 elementen.notitieSlot.addEventListener('click', () => {
     if (gameState.notitieGevonden) {
-elementen.notitieModal.classList.remove('verborgen');
+        elementen.notitieModal.classList.remove('verborgen');
     } else {
-alert('Je hebt nog geen notitie gevonden.');
+        toonStatusBericht('Je hebt nog geen notitie gevonden.', 'info');
     }
 });
 
 elementen.sleutelSlot.addEventListener('click', () => {
     if (gameState.sleutelGevonden) {
-alert('Je hebt de sleutel! Gebruik hem om de deur te openen.');
+        toonStatusBericht('🔑 Je hebt de sleutel! Gebruik hem om de deur te openen.', 'success');
     } else {
-alert('Je hebt nog geen sleutel gevonden.');
+        toonStatusBericht('Je hebt nog geen sleutel gevonden.', 'info');
     }
 });
 
@@ -209,43 +279,56 @@ function gameOver() {
     gameState.spelActief = false;
     clearInterval(timerInterval);
     
+    toonStatusBericht('⏰ Tijd is op! Game Over!', 'error');
+    
     setTimeout(() => {
         // Переход на страницу поражения
         window.location.href = '../win-verlies/losevd.html';
-    }, 1000);
+    }, 2000);
 }
 
 // Функция победы
-function gameWin() {
+function winSpel() {
     gameState.spelActief = false;
     clearInterval(timerInterval);
+    
+    toonStatusBericht('🎉 Gefeliciteerd! Je bent ontsnapt!', 'success');
     
     setTimeout(() => {
         // Переход на страницу победы
         window.location.href = '../win-verlies/winvd.html';
-    }, 1000);
+    }, 2000);
 }
 
-// Инициализация игры с проверкой изображений
-function initializeGame() {
-    console.log('Escape Room - Kamer 2 geladen');
-    console.log('Doel: Vind de sleutel, ontdek de code, en ontsnap!');
+// Функция проверки подключения к базе данных
+async function controleerDatabaseVerbinding() {
+    try {
+        const response = await fetch('get-question.php?id=1&roomId=2');
+        const data = await response.json();
+        
+        if (data.success) {
+            console.log('✅ Database verbinding OK');
+            return true;
+        } else {
+            console.warn('⚠️ Database verbinding probleem:', data.message);
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Database verbinding fout:', error);
+        toonStatusBericht('⚠️ Probleem met database verbinding. Sommige functies werken mogelijk niet.', 'error');
+        return false;
+    }
+}
+
+// Инициализация игры
+async function initializeGame() {
+    console.log('🎮 Escape Room - Kamer 2 geladen');
+    console.log('🎯 Doel: Vind de sleutel, ontdek de code, en ontsnap!');
     
-    // Проверяем загрузку фонового изображения
-    const testImg = new Image();
-    testImg.onload = function() {
-        console.log('Achtergrond afbeelding geladen');
-    };
-    testImg.onerror = function() {
-        console.log('Achtergrond afbeelding niet gevonden, gebruikt fallback');
-    };
-    testImg.src = 'img/hospital-corridor.jpg';
-}
-
-// Функция перезапуска игры (для использования на страницах победы/поражения)
-function restartGame() {
-    // Возврат к основной игре
-    window.location.href = '../homepagina/indexvit.html';
+    // Проверяем подключение к базе данных
+    await controleerDatabaseVerbinding();
+    
+    toonStatusBericht('🏥 Welkom in de medische afdeling! Zoek naar aanwijzingen...', 'info');
 }
 
 // Запуск игры

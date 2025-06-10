@@ -1,10 +1,13 @@
 <?php
-require_once('./dbcon.php');
-
+// dbcon.php - Подключение к базе данных
+$servername = "localhost";
+$username = "root";  
+$password = "";  
+$dbname = "project4";
 try {
-  $stmt = $db_connection->query("SELECT * FROM questions WHERE roomId = 2");
-  $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-  die("Databasefout: " . $e->getMessage());
+    $pdo = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch(PDOException $e) {
+    die("Connection failed: " . $e->getMessage());
 }
 ?>

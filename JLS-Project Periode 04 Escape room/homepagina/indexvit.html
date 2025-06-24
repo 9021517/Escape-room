@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hospital Escape</title>
+  <link rel="stylesheet" href="stylevid2.css" />
+</head>
+<body>
+  <section class="screen" id="home-screen">
+    <div class="content-box">
+      <br><br><br><br><br>
+      <h1>Hospital Escape</h1>
+      <p>Je bent gekidnaped door een psigiese stoornis doctor die houwt van mensen lichaam te onderzoeken
+         je moet van hier komen te ontsnappen zonder dat je dood wordt gemaakt.!</p>
+      <p>
+        Je wordt wakker in een verlaten ziekenhuis. Alles is donker en stil...
+        maar je voelt dat je niet alleen bent. Vind een manier om te ontsnappen
+        voordat het te laat is...
+      </p>
+      
+      <div class="login-form">
+        <input type="text" id="username" placeholder="Gebruikersnaam" required>
+        <input type="password" id="password" placeholder="Wachtwoord" required>
+        <div class="buttons">
+          <button onclick="loginUser()" class="login_button">Inloggen</button>
+        </div>
+        <div id="message" class="message"></div>
+        <input type="text" id="team-name" placeholder="Voer je team naam in" required onkeypress="handleEnter(event)">
+        <div class="buttons">
+          <button onclick="startGame()" class="play_button" id="play-btn" disabled>Play</button>
+          <button onclick="registerTeam()">Registreren</button>
+          <button onclick="window.location.href='options.html'">Options</button>
+          <button onclick="window.close()">Exit</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    let isLoggedIn = false;
+    let userRole = '';
+
+    function handleEnter(event) {
+      if (event.key === 'Enter') {
+        if (!isLoggedIn) {
+          loginUser();
+        } else {
+          startGame();
+        }
+      }
+    }
+
+    async function loginUser() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      
+      if (!username) {
+        showMessage('Voer gebruikersnaam in!', 'error');
+        return;
+      }
+      
+      if (!password) {
+        showMessage('Voer wachtwoord in!', 'error');
+        return;
+      }
+      
+      try {
+        const response = await fetch('inloggen.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: `action=login&team_name=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          isLoggedIn = true;
+          userRole = data.role;
+          showMessage(data.message, 'success');
+          
+          if (data.role === 'admin') {
+            // Admin gaat direct naar dashboard
+            setTimeout(() => {
+              window.location.href = data.redirect;
+            }, 1000);
+          } else {
+            // Speler moet Play knop gebruiken
+            document.getElementById('play-btn').disabled = false;
+            document.getElementById('play-btn').style.opacity = '1';
+          }
+        } else {
+          showMessage(data.message, 'error');
+        }
+      } catch (error) {
+        showMessage('Verbindingsfout!', 'error');
+      }
+    }
+
+    async function startGame() {
+      if (!isLoggedIn) {
+        showMessage('Log eerst in!', 'error');
+        return;
+      }
+      
+      if (userRole !== 'speler') {
+        showMessage('Alleen spelers kunnen het spel starten!', 'error');
+        return;
+      }
+      
+      const teamName = document.getElementById('team-name').value.trim();
+      
+      if (!teamName) {
+        showMessage('Voer een team naam in!', 'error');
+        return;
+      }
+      
+      showMessage('Spel wordt gestart...', 'success');
+      setTimeout(() => {
+        window.location.href = "../kamer_1/room1.html";
+      }, 1000);
+    }
+
+    // NIEUWE VERBETERDE REGISTRATIE FUNCTIE - VERVANG DE OUDE
+    async function registerTeam() {
+      const teamName = document.getElementById('team-name').value.trim();
+      
+      if (!teamName) {
+        showMessage('Voer een team naam in!', 'error');
+        return;
+      }
+      
+      try {
+        const response = await fetch('inloggen.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: `action=register&team_name=${encodeURIComponent(teamName)}`
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          showMessage(data.message, 'success');
+          // Auto-fill de login velden
+          document.getElementById('username').value = teamName;
+          document.getElementById('password').value = 'default123';
+        } else {
+          showMessage(data.message, 'error');
+        }
+      } catch (error) {
+        showMessage('Registratie fout: ' + error.message, 'error');
+      }
+    }
+
+    // Functie voor het tonen van berichten
+    function showMessage(message, type) {
+      const messageDiv = document.getElementById('message');
+      messageDiv.textContent = message;
+      messageDiv.className = `message ${type}`;
+      messageDiv.style.display = 'block';
+      
+      setTimeout(() => {
+        messageDiv.style.display = 'none';
+      }, 4000);
+    }
+  </script>
+
+  <style>
+    .login-form {
+      width: 100%;
+    }
+    
+    #team-name,
+    #username,
+    #password {
+      background: transparent;
+      color: white;
+      font-size: 18px;
+      padding: 12px 20px;
+      border: 2px solid white;
+      width: 250px;
+      margin-bottom: 20px;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 1px;
+      text-align: center;
+      border-radius: 5px;
+      transition: all 0.2s ease-in-out;
+      box-shadow: 0 0 5px rgba(255,255,255,0.3);
+    }
+    
+    #team-name:focus,
+    #username:focus,
+    #password:focus {
+      outline: none;
+      background-color: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 10px rgba(255,255,255,0.5);
+      transform: scale(1.02);
+    }
+    
+    #team-name::placeholder,
+    #username::placeholder,
+    #password::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .message {
+      display: none;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    
+    .message.success {
+      background-color: rgba(0, 255, 0, 0.2);
+      color: #00ff00;
+      border: 1px solid #00ff00;
+    }
+    
+    .message.error {
+      background-color: rgba(255, 0, 0, 0.3);
+      color: #ff4444;
+      border: 2px solid #ff4444;
+      font-weight: bold;
+    }
+    
+    #play-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .login_button {
+      background-color: #4CAF50;
+      border: 2px solid #4CAF50;
+      color: white;
+      padding: 12px 24px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+    }
+    
+    .login_button:hover {
+      background-color: #45a049;
+      border-color: #45a049;
+    }
+  </style>
+</body>
+</html>

@@ -1,0 +1,165 @@
+body {
+  margin: 0;
+  height: 100vh;
+  background-color: black;
+  background-image: url('homepage.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Courier New', monospace;
+}
+
+.screen {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hidden {
+  display: none;
+}
+
+.content-box {
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 40px;
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+  max-width: 600px;
+  box-shadow: 0 0 15px rgba(255,255,255,0.2);
+}
+
+.content-box h1 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.content-box p {
+  font-size: 18px;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
+
+button {
+  background: transparent;
+  color: white;
+  font-size: 24px;
+  padding: 12px 32px;
+  border: 2px solid white;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 0 5px rgba(255,255,255,0.3);
+  width: 250px; /* Alle knoppen dezelfde breedte */
+}
+
+button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+
+/* Afstand tussen Play button en input veld */
+.buttons:first-of-type {
+  margin-bottom: 20px;
+}
+
+#room1 {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.transparent {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+#key {
+  width: 80px;
+  cursor: pointer;
+  margin: 20px;
+  transition: transform 0.2s ease;
+}
+
+#key:hover {
+  transform: scale(1.1);
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.1);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.login-form {
+  width: 100%;
+}
+
+input[type="text"] {
+  background: transparent;
+  color: white;
+  font-size: 18px;
+  padding: 12px 20px;
+  border: 2px solid white;
+  width: 250px;
+  margin-bottom: 20px;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
+  text-align: center;
+  border-radius: 5px;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 0 5px rgba(255,255,255,0.3);
+}
+
+input[type="text"]:focus {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 10px rgba(255,255,255,0.5);
+  transform: scale(1.02);
+}
+
+input[type="text"]::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.message {
+  display: none;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.message.success {
+  background-color: rgba(0, 255, 0, 0.2);
+  color: #00ff00;
+  border: 1px solid #00ff00;
+}
+
+.message.error {
+  background-color: rgba(255, 0, 0, 0.3);
+  color: #ff4444;
+  border: 2px solid #ff4444;
+  font-weight: bold;
+}

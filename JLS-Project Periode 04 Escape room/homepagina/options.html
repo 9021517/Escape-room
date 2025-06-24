@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hospital Escape - Options</title>
+  <link rel="stylesheet" href="stylevid2.css" />
+</head>
+<body>
+  <section class="screen" id="home-screen">
+    <div class="content-box">
+      <br><br><br><br><br>
+      <h1>Hospital Escape</h1>
+      <p>Je bent gekidnaped door een psigiese stoornis doctor die houwt van mensen lichaam te onderzoeken
+         je moet van hier komen te ontsnappen zonder dat je dood wordt gemaakt.!</p>
+      <p>
+        Je wordt wakker in een verlaten ziekenhuis. Alles is donker en stil...
+        maar je voelt dat je niet alleen bent. Vind een manier om te ontsnappen
+        voordat het te laat is...
+      </p>
+      
+      <div class="login-form">
+        <div class="buttons">
+          <button onclick="goToTeamsCrud()">Teams Beheren</button>
+          <button onclick="goToQuestionsCrud()">Vragen Beheren</button>
+          <button onclick="goToResults()">Resultaten</button>
+          <button onclick="goBack()">Terug</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    function goToTeamsCrud() {
+      window.location.href = "admin/teams_crud.php";
+    }
+
+    function goToQuestionsCrud() {
+      window.location.href = "../CRUD_vragen/crud_vragen.php";
+    }
+
+    function goToResults() {
+      window.location.href = "resultaten.html";
+    }
+
+    function goBack() {
+      window.location.href = "indexvit.html";
+    }
+  </script>
+</body>
+</html>

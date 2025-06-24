@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kamer 1.2 - Bloedpuzzel</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: #1b1b1b;
+      color: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background-image: url('bloodfloor.png'); /* vervang dit met jouw bloedige achtergrond */
+      background-size: cover;
+      background-position: center;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      max-width: 600px;
+    }
+
+    h1 {
+      color: darkred;
+      font-size: 36px;
+    }
+
+    .bloody-text {
+      font-size: 22px;
+      color: red;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 18px;
+      width: 70%;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: darkred;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    #feedback {
+      margin-top: 15px;
+      font-size: 18px;
+    }
+
+    #timer {
+      font-size: 20px;
+      color: #ff4444;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Kamer 1.2 - Bloedpuzzel</h1>
+    <p class="bloody-text">
+      Op de vloer staat met bloed geschreven:<br>
+      "Wat loopt in de ochtend op vier benen,<br>
+      in de middag op twee,<br>
+      en in de avond op drie?"
+    </p>
+
+    <input type="text" id="answer" placeholder="Typ je antwoord..." />
+    <br>
+    <button onclick="checkAnswer()">Controleer</button>
+    <p id="feedback"></p>
+    <p id="timer">Tijd over: 30 seconden</p>
+  </div>
+
+  <script>
+    let timeLeft = 30;
+    const timerDisplay = document.getElementById("timer");
+    const feedback = document.getElementById("feedback");
+    const correctAnswers = ["mens", "een mens", "de mens"];
+
+    const timer = setInterval(() => {
+      timeLeft--;
+      timerDisplay.textContent = `Tijd over: ${timeLeft} seconden`;
+
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        window.location.href = "losevd.html"; // Zorg dat je deze pagina hebt
+      }
+    }, 1000);
+
+    function checkAnswer() {
+      const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
+      if (correctAnswers.includes(userAnswer)) {
+        clearInterval(timer);
+        feedback.textContent = "Correct! Je hebt de puzzel opgelost.";
+        setTimeout(() => {
+          window.location.href = "../kamer_2/index.html"; // Zorg dat je deze pagina hebt
+        }, 1500);
+      } else {
+        feedback.textContent = "Fout antwoord... probeer opnieuw.";
+
+      }
+    }
+
+    function kamerVoltooid() {
+      if (window.opener) {
+        window.opener.spelGewonnen();
+      }
+    }
+  </script>
+</body>
+</html>

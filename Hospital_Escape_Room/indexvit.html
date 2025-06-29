@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hospital Escape - Homepage</title>
+  <link rel="stylesheet" href="stylevid.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: #fff;
+    }
+
+    .content-box {
+      max-width: 800px;
+      margin: auto;
+      padding: 40px;
+      background-color: rgba(3, 0, 0, 0.646);
+      border-radius: 15px;
+    }
+
+    .buttons button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .hidden { display: none; }
+
+    .form-container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 10px;
+    }
+
+    input, textarea, select, button {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #222;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #555;
+      text-align: left;
+    }
+
+    .btn-edit {
+      background: #2196F3;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+    }
+
+    .btn-delete {
+      background: #f44336;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+    }
+  </style>
+</head>
+<body>
+  <section class="screen" id="home-screen">
+    <div class="content-box">
+      <h1>Hospital Escape</h1>
+      <p>
+        Je bent gekidnapt door een gestoorde dokter. Hij is gek op het onderzoeken van mensenlichamen... terwijl ze nog leven.
+      <br>Je wordt wakker in een donker, oud ziekenhuis. Alles is stil. Te stil. Je voelt dat je niet alleen bent. Je moet hier weg. Snel. Verstop je. Vind een uitweg. Of je wordt zijn volgende slachtoffer...
+      </p>
+
+      <div class="buttons">
+        <button onclick="startGame()">Play</button>
+        <button onclick="toggleTeams()">Teams Overzicht</button>
+        <button onclick="toggleBeheer()">Registratie / Beheer</button>
+        <button onclick="window.close()">Exit</button>
+      </div>
+
+      <!-- Teams overzicht -->
+      <div id="form-container" class="hidden form-container">
+        <h2>Teams Overzicht</h2>
+        <div id="teams-list"><p>Laden...</p></div>
+      </div>
+
+      <!-- Registratie / CRUD -->
+      <div id="beheer-container" class="hidden form-container">
+        <label for="role">Rol:</label>
+        <select id="role" onchange="switchRole()">
+          <option value="speler">Speler</option>
+          <option value="admin">Admin</option>
+        </select>
+
+        <!-- Speler registratie -->
+        <div id="speler-view">
+          <h3>Registreer een team</h3>
+          <form id="teamForm">
+            <input type="text" id="teamName" placeholder="Teamnaam" required>
+            <textarea id="members" placeholder="Teamleden (komma gescheiden)" required></textarea>
+            <button type="submit">Registreer</button>
+          </form>
+        </div>
+
+        <!-- Admin CRUD -->
+        <div id="admin-view" class="hidden">
+          <h3>Beheer teams</h3>
+          <table>
+            <thead>
+              <tr><th>Teamnaam</th><th>Leden</th><th>Eindtijd</th><th>Acties</th></tr>
+            </thead>
+            <tbody id="teamList"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    let teams = [];
+
+    function startGame() {
+      window.location.href = "room1.html";
+    }
+
+    function toggleTeams() {
+      const container = document.getElementById("form-container");
+      container.classList.toggle("hidden");
+      if (!container.classList.contains("hidden")) loadTeamsFromServer();
+    }
+
+    function toggleBeheer() {
+      document.getElementById("beheer-container").classList.toggle("hidden");
+    }
+
+    function switchRole() {
+      const role = document.getElementById("role").value;
+      document.getElementById("speler-view").classList.toggle("hidden", role !== "speler");
+      document.getElementById("admin-view").classList.toggle("hidden", role !== "admin");
+    }
+
+    // Registratie toevoegen
+    document.getElementById("teamForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const team = {
+        id: Date.now(),
+        name: document.getElementById("teamName").value,
+        members: document.getElementById("members").value,
+        endTime: new Date().toLocaleTimeString()
+      };
+      teams.push(team);
+      renderTeams();
+      this.reset();
+      alert("Team geregistreerd!");
+    });
+
+    function renderTeams() {
+      const tbody = document.getElementById("teamList");
+      tbody.innerHTML = '';
+      teams.forEach(t => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${t.name}</td>
+          <td>${t.members}</td>
+          <td>${t.endTime}</td>
+          <td>
+            <button class="btn-edit" onclick="editTeam(${t.id})">Bewerk</button>
+            <button class="btn-delete" onclick="deleteTeam(${t.id})">Verwijder</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function editTeam(id) {
+      const team = teams.find(t => t.id === id);
+      if (!team) return;
+      document.getElementById("teamName").value = team.name;
+      document.getElementById("members").value = team.members;
+      deleteTeam(id);
+      document.getElementById("role").value = "speler";
+      switchRole();
+    }
+
+    function deleteTeam(id) {
+      teams = teams.filter(t => t.id !== id);
+      renderTeams();
+    }
+
+    // Teams ophalen uit server (optioneel)
+    function loadTeamsFromServer() {
+      const list = document.getElementById("teams-list");
+      fetch('teams_overzicht_api.php')
+        .then(res => res.json())
+        .then(data => {
+          if (!data.length) {
+            list.innerHTML = '<p>Geen teams gevonden.</p>';
+            return;
+          }
+          list.innerHTML = '<ul>' + data.map(t =>
+            `<li>${t.username} — Eindtijd: ${t.eindtijd || '-'}
+              <button onclick="deleteTeamFromServer(${t.id})">Verwijder</button>
+            </li>`
+          ).join('') + '</ul>';
+        })
+        .catch(() => {
+          list.innerHTML = '<p>Fout bij laden.</p>';
+        });
+    }
+
+    function deleteTeamFromServer(id) {
+      if (!confirm("Weet je zeker dat je dit team wilt verwijderen?")) return;
+      fetch(`team_verwijderen.php?id=${id}`)
+        .then(r => {
+          if (r.ok) loadTeamsFromServer();
+        });
+    }
+  </script>
+</body>
+</html>

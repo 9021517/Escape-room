@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Verlies - Hospital Escape</title>
+  <link rel="stylesheet" href="stylevid.css" />
+</head>
+<body>
+  <section class="screen" id="lose-screen">
+    <div class="content-box">
+      <h1>Game Over</h1>
+      <p>Je hebt het niet gehaald... probeer het opnieuw.</p>
+      <div class="buttons">
+        <button onclick="restartGame()">Opnieuw proberen</button>
+        <button onclick="window.close()">Afsluiten</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    function restartGame() {
+      window.location.href = "indexvit.html"; // Verander dit naar je startscherm
+    }
+  </script>
+</body>
+</html>

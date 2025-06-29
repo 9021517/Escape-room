@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kamer 1.2 - Bloedpuzzel</title>
+    <style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: #0b0b0b;
+    color: #fff;
+    font-family: 'Courier New', Courier, monospace;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-image: url('img/room1.2.png'); /* pas dit pad aan naar jouw achtergrond */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .container {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 600px;
+    width: 90%;
+    box-shadow: 0 0 15px red;
+  }
+
+  h1 {
+    font-size: 2rem;
+    color: crimson;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px black;
+  }
+
+  .bloody-text {
+    font-size: 1.1rem;
+    color: #ffffff;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 3px black;
+  }
+
+  .hint {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  input[type="text"] {
+    padding: 10px;
+    width: 80%;
+    border: 1px solid crimson;
+    border-radius: 5px;
+    background-color: #222;
+    color: white;
+    font-size: 1rem;
+    margin-bottom: 15px;
+  }
+
+  button {
+    background-color: crimson;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  button:hover {
+    background-color: darkred;
+  }
+
+  #feedback {
+    margin-top: 15px;
+    font-weight: bold;
+    color: #f44336;
+  }
+
+  #timer {
+    margin-top: 20px;
+    font-size: 1.1rem;
+    color: lightcoral;
+  }
+
+  @media (max-width: 600px) {
+    h1 {
+      font-size: 1.5rem;
+    }
+
+    .bloody-text {
+      font-size: 1rem;
+    }
+  }
+</style>
+
+</head>
+<body>
+  <div class="container">
+    <h1>Kamer 1.2 - Bloedpuzzel</h1>
+    <p class="bloody-text">
+      Op de vloer staat met bloed geschreven:<br>
+      "Wat loopt in de ochtend op vier benen,<br>
+      in de middag op twee,<br>
+      en in de avond op drie?"
+    </p>
+    <p class="hint">Hint: Het antwoord is een levend wezen.</p>
+
+    <input type="text" id="answer" placeholder="Typ je antwoord..." />
+    <br>
+    <button onclick="checkAnswer()">Controleer</button>
+    <p id="feedback"></p>
+    <p id="timer">Tijd over: 30 seconden</p>
+  </div>
+
+  <script>
+    let timeLeft = 30;
+    const timerDisplay = document.getElementById("timer");
+    const feedback = document.getElementById("feedback");
+    const correctAnswers = ["mens", "een mens", "de mens"];
+
+    const timer = setInterval(() => {
+      timeLeft--;
+      timerDisplay.textContent = `Tijd over: ${timeLeft} seconden`;
+
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        window.location.href = "losevd.html";
+      }
+    }, 1000);
+
+    function checkAnswer() {
+      const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
+      if (correctAnswers.includes(userAnswer)) {
+        clearInterval(timer);
+        feedback.textContent = "Correct! Je hebt de puzzel opgelost.";
+        setTimeout(() => {
+          window.location.href = "winvd.html";
+        }, 1500);
+      } else {
+        feedback.textContent = "Fout antwoord... probeer opnieuw.";
+
+      }
+    }
+  </script>
+</body>
+</html>

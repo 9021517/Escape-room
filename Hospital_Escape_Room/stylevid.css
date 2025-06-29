@@ -1,0 +1,93 @@
+body {
+  margin: 0;
+  height: 100vh;
+  background-color: black;
+  background-image: url('img/backround.png'); 
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Courier New', monospace;
+}
+
+
+.screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.content-box {
+  max-width: 400px; /* kleiner dan voorheen */
+  padding: 15px 20px;
+  text-align: center;
+}
+
+h1 {
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+p {
+  line-height: 1.4;
+  font-size: 0.9em;
+}
+
+.buttons {
+  margin-top: 15px;
+}
+
+button {
+  background-color: #ac0d0d;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  cursor: pointer;
+  margin: 0 5px 10px 5px;
+  font-size: 0.9em;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #be4117;
+}
+
+.hidden {
+  display: none;
+}
+
+#form-container {
+  margin-top: 20px;
+  text-align: left;
+  font-size: 0.9em;
+}
+
+#teams-list ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+#teams-list li {
+  background: #333;
+  margin-bottom: 8px;
+  padding: 8px 10px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#teams-list button {
+  background-color: #e74c3c;
+  padding: 5px 8px;
+  font-size: 0.8em;
+  margin-left: 5px;
+}
+
+#teams-list button:hover {
+  background-color: #c0392b;
+}
